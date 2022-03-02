@@ -1,0 +1,18 @@
+command /god:
+	permission: default.admin
+	trigger:
+		set {godmode} to 1
+		message "<green>God mode actived."
+
+command /ungod:
+	permission: default.admin
+	trigger:
+		if {godmode} is 1:
+			set {godmode} to 0
+			message "<green>God mode deactived."
+			stop
+		message "<red>God mode is off."
+
+on damage:
+	if {godmode} is 1:
+		cancel event

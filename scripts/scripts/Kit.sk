@@ -1,0 +1,26 @@
+command /food:
+	cooldown:  60 minutes
+	cooldown message: <red>You need to wait<green>%remaining time%<red>.
+	cooldown bypass: default.tester
+	trigger:
+		if the player's inventory doesn't have space for steak:
+			message "<red>You don't have any space for that."
+			cancel command cooldown
+		else:
+			give 64 of steak to the player
+			message "<green>There's your food."
+			
+command /kitcommand <string>:
+	trigger:
+		if argument-1 is "starter":
+			give the player iron sword
+			give the player iron pickaxe
+			give the player iron axe
+			give the player iron shovel
+			give the player iron hoe
+			give the player iron helmet
+			give the player iron chestplate
+			give the player iron leggings
+			give the player iron boots
+			wait 1 tick
+			message "<green>Redeemed starter kit"

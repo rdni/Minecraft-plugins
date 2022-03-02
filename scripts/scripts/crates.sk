@@ -1,0 +1,105 @@
+on inventory click:
+	if name of event-inventory is "Tier 1 Crate":
+		if {guitake} is 0:
+			cancel event
+		if event-slot is 18:
+			close the player's inventory
+			stop
+		if event-slot is 26:
+			if player has tripwire hook of unbreaking 1 named "&r&eTier 1 Crate Key" with lore "&r&eUse this on Tier 1 crates":
+				message "<green>Opening crate"
+				remove tripwire hook of unbreaking 1 named "&r&eTier 1 Crate Key" with lore "&r&eUse this on Tier 1 crates" from player
+				set {_random::%player's uuid%} to a random integer between 1 and 5
+				if {_random::%player's uuid%} = 1 or 2 or 3 or 4:
+					give the player 32 of diamond
+					set {t1reward::%player's uuid%} to 32 diamonds
+				else if {_random::%player's uuid%} is 5:
+					give the player 3 of netherite ingot
+					set {t1reward::%player's uuid%} to 3 netherite ingots
+			else:
+				message "<red>You don't have a key for that."
+				
+on break of chest:
+	if name of event-block is "Tier 1 Crate":
+		cancel event
+		if {guibreak::%player's uuid%} is 1:
+			set {_confirmgui} to a new chest inventory with 1 row with name "Confirm Crate Break"
+			set slot 3 of {_confirmgui} to green concrete named "&r&2CONFIRM"
+			set slot 5 of {_confirmgui} to red concrete named "&r&2CANCEL"
+			set {_cratebreaklocation} to location of event-block
+			message "%{_cratebreaklocation}%"
+			open {_confirmgui} to player
+		else:
+			message "<red>You don't have permission to do that."
+		
+			
+on inventory click:
+	if name of event-inventory is "Confirm crate break":
+		cancel event
+		if index of event-slot = 3:
+			loop blocks in radius 2 around player:
+				if loop-block is a chest:
+					if name of loop-block is "Tier 1 Crate":
+						set loop-block to air
+			close the player's inventory
+		if index of event-slot = 5:
+			message "<red>Cancelled."
+			close the player's inventory
+			
+on right click:
+	if clicked block is chest:
+		if name of event-block is "Tier 1 Crate":
+			if the player is sneaking:
+				cancel event
+				if player has tripwire hook of unbreaking 1 named "&r&eTier 1 Crate Key" with lore "&r&eUse this on Tier 1 crates":
+					message "<green>Opening crate"
+					wait 2 ticks
+					remove tripwire hook of unbreaking 1 named "&r&eTier 1 Crate Key" with lore "&r&eUse this on Tier 1 crates" from player
+					set {_random::%player's uuid%} to a random integer between 1 and 5
+					if {_random::%player's uuid%} = 1 or 2 or 3 or 4:
+						give the player 32 of diamond
+						set {t1reward::%player's uuid%} to 32 diamonds
+					else if {_random::%player's uuid%} is 5:
+						give the player 3 of netherite ingot
+						set {t1reward::%player's uuid%} to 3 netherite ingots
+					message "<green>You got %{t1reward::%player's uuid%}%"
+				else:
+					message "<red>You don't have a key for that."
+			else:
+				cancel event
+				open inventory of clicked block to player
+				
+				
+on break of diamond ore:
+	chance of 5%:
+		drop tripwire hook of unbreaking 1 named "&r&eTier 1 Crate Key" with lore "&r&eUse this on Tier 1 crates"
+
+on break of deepslate diamond ore:
+	chance of 5%:
+		drop tripwire hook of unbreaking 1 named "&r&eTier 1 Crate Key" with lore "&r&eUse this on Tier 1 crates"
+	
+	
+	
+command /guitakeon:
+	permission: default.admin
+	trigger:
+		set {guitake} to 1
+		message "<green>You can now take items out of guis"
+	
+command /guitakeoff:
+	permission: default.admin
+	trigger:
+		set {guitake} to 0
+		message "<green>You now can't take items out of guis"
+		
+command /guibreakon:
+	permission: default.admin
+	trigger:
+		set {guibreak::%player's uuid%} to 1
+		message "<green>You can now break guis"
+		
+command /guibreakoff:
+	permission: default.admin
+	trigger:
+		set {guibreak::%player's uuid%} to 0
+		message "<green>You now can't break guis"

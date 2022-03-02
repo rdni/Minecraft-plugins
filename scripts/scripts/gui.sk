@@ -1,0 +1,172 @@
+command /warp:
+	permission: default.tester
+	cooldown: 5 seconds
+	cooldown message: <red>You need to wait <green>%remaining time%<red>.
+	cooldown bypass: default.tester
+	trigger:
+		set {_guiadmin} to a new chest inventory with 5 row with name "Warp"
+		set {gui_number} to 0
+		loop 45 times:
+			set slot {gui_number} of {_guiadmin} to light gray glass pane named ""
+			add 1 to {gui_number}
+		wait 1 tick
+		set slot 4 of {_guiadmin} to nether star named "&r&cSpawn" with lore "&r&lTeleports you to spawn"
+		set slot 20 of {_guiadmin} to oak sapling named "&r&cSet home"
+		set slot 22 of {_guiadmin} to ender chest named "&r&cWarps you to your home"
+		set slot 24 of {_guiadmin} to barrier named "&r&cDelete Home"
+		set slot 40 of {_guiadmin} to dragon egg named "&r&cEnd" with lore "&r&lTeleports you to the end"
+		set slot 44 of {_guiadmin} to diamond sword named "&r&cKits"
+		open {_guiadmin} to player
+		
+on inventory click:
+	if name of event-inventory is "Warp":
+		if {guitake} is 0:
+			cancel event
+		if index of event-slot = 4:
+			if {spawnset} is 0:
+				message "<red>Spawn has not yet been set."
+				message "<green>Please contact your <red>server administator<green> to set the spawn."
+				close the player's inventory
+				stop
+			teleport player to {spawn}
+			message "<green>Warped to spawn."
+			close the player's inventory
+		if index of event-slot = 20:
+			if {home::%player's uuid%} is not set:
+				set {home::%player's uuid%} to location of player
+				message "<green>Home succesfully set"
+				close the player's inventory
+				stop
+			message "<red>You already have a home!"
+			message "<gray>Use <orange>/delhome <gray>to delete your home."
+			close the player's inventory
+		if index of event-slot = 22:
+			if {home::%player's uuid%} is not set:
+				message "<red>You don't have a home!"
+				message "<gray>Use <orange>/sethome <gray>to set your home."
+				close the player's inventory
+				stop
+			teleport player to {home::%player's uuid%}
+			close the player's inventory
+		if index of event-slot = 24:
+			if {home::%player's uuid%} is not set:
+				message "<red>You don't have a home!"
+				message "<gray>Use <orange>/sethome <gray>to set your home."
+				close the player's inventory
+				stop
+			set {_confirmgui} to a new chest inventory with 1 row with name "Confirmhome"
+			set slot 3 of {_confirmgui} to green concrete named "&r&2CONFIRM"
+			set slot 5 of {_confirmgui} to red concrete named "&r&2CANCEL"
+			open {_confirmgui} to player
+		if index of event-slot = 40:
+			teleport player to {end}
+			message "<green>Warped to the end."
+			close player's inventory
+		if index of event-slot = 44:
+			set {_guikit} to a new chest inventory with 3 row with name "Kit"
+			set {gui_numberkit} to 0
+			loop 45 times:
+				set slot {gui_numberkit} of {_guikit} to light gray glass pane named ""
+				add 1 to {gui_numberkit}
+			set slot 13 of {_guikit} to iron pickaxe named "&r&cStarter kit" with lore "&r&eGives you full iron tools"
+			set slot 11 of {_guikit} to diamond pickaxe of efficiency 5 named "&r&cVIP kit" with lore "&r&eGives you full enchanted diamond armour"
+			set slot 15 of {_guikit} to netherite pickaxe of efficiency 5 named "&r&eOP kit" with lore "&r&eKit for people with OP"
+			open {_guikit} to the player
+on inventory click:
+	if name of event-inventory is "Confirmhome":
+		if {guitake} is 0:
+			cancel event
+		if index of event-slot = 3:
+			if {home::%player's uuid%} is not set:
+				message "<red>You don't have a home!"
+				message "<gray>Use <orange>/sethome <gray>to set your home."
+				stop
+			clear {home::%player's uuid%}
+			message "<green>Succefully deleted home."
+			close the player's inventory
+		if index of event-slot = 5:
+			message "<red>Cancelled."
+			close the player's inventory
+			
+command /kit:
+	permission: default.tester
+	trigger:
+		set {_guikit} to a new chest inventory with 3 row with name "Kit"
+		set {gui_numberkit} to 0
+		loop 45 times:
+			set slot {gui_numberkit} of {_guikit} to light gray glass pane named ""
+			add 1 to {gui_numberkit}
+			set slot 13 of {_guikit} to iron pickaxe named "&r&cStarter kit" with lore "&r&eGives you full iron tools"
+			set slot 11 of {_guikit} to diamond pickaxe of efficiency 5 named "&r&cVIP kit" with lore "&r&eGives you full enchanted diamond armour"
+			set slot 15 of {_guikit} to netherite pickaxe of efficiency 5 named "&r&eOP kit" with lore "&r&eKit for people with OP"
+		open {_guikit} to player
+		
+on inventory click:
+	if name of event-inventory is "Kit":
+		if {guitake} is 0:
+			cancel event
+		if index of event-slot = 13:
+			give the player iron sword
+			give the player iron pickaxe
+			give the player iron axe
+			give the player iron shovel
+			give the player iron hoe
+			give the player iron helmet
+			give the player iron chestplate
+			give the player iron leggings
+			give the player iron boots
+			wait 1 tick
+			message "<green>Redeemed starter kit."
+			close the player's inventory
+		if index of event-slot = 11:
+			if player has permission "default.vip":
+				give the player diamond sword of sharpness 5 and unbreaking 3
+				give the player diamond pickaxe of efficiency 5 and unbreaking 3
+				give the player diamond axe of sharpness 5 and unbreaking 3 and efficiency 5
+				give the player diamond helmet of protection 4 and unbreaking 3
+				give the player diamond chestplate of protection 4 and unbreaking 3
+				give the player diamond leggings of protection 4 and unbreaking 3
+				give the player diamond boots of protection 4 and unbreaking 3
+				message "<green>Reedeemed VIP kit."
+				close the player's inventory
+			else:
+				message "<red>You don't have permission for that."
+				close the player's inventory
+		if index of event-slot = 15:
+			set {_guiop} to a new chest inventory with 3 row named "OP kit"
+			set {gui_numberop} to 0
+			loop 45 times:
+				set slot {gui_numberop} of {_guiop} to light gray glass pane named ""
+				add 1 to {gui_numberop}
+			set slot 0 of {_guiop} to netherite sword of sharpness 5 and unbreaking 3
+			set slot 1 of {_guiop} to netherite pickaxe of efficiency 5 and unbreaking 3
+			set slot 2 of {_guiop} to netherite axe of sharpness 5 and unbreaking 3 and efficiency 5
+			set slot 3 of {_guiop} to netherite helmet of protection 4 and unbreaking 3
+			set slot 4 of {_guiop} to netherite chestplate of protection 4 and unbreaking 3
+			set slot 5 of {_guiop} to netherite leggings of protection 4 and unbreaking 3
+			set slot 6 of {_guiop} to netherite boots of protection 4 and unbreaking 3
+			set slot 7 of {_guiop} to enchanted golden apple
+			set slot 8 of {_guiop} to 10 of golden apple
+			set slot 18 of {_guiop} to arrow named "&r&cBack"
+			set slot 26 of {_guiop} to green concrete named "&r&cClaim"
+			open {_guiop} to the player
+	if name of event-inventory is "OP kit":
+		cancel event
+		if index of event-slot is 18:
+			close the player's inventory
+		if index of event-slot is 26:
+			if player has permission "default.mod":
+				give the player netherite sword of sharpness 5 and unbreaking 3
+				give the player netherite pickaxe of efficiency 5 and unbreaking 3
+				give the player netherite axe of sharpness 5 and unbreaking 3 and efficiency 5
+				give the player netherite helmet of protection 4 and unbreaking 3
+				give the player netherite chestplate of protection 4 and unbreaking 3
+				give the player netherite leggings of protection 4 and unbreaking 3
+				give the player netherite boots of protection 4 and unbreaking 3
+				give the player enchanted golden apple
+				give the player 10 of golden apple
+				message "<green>Redeemed OP kit."
+				close the player's inventory
+			else:
+				message "<red>You don't have permission for that"
+				close the player's inventory

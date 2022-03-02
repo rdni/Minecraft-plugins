@@ -1,0 +1,37 @@
+command /spawn:
+	aliases: spawnwarp, spawntp, spawn-warp, spawn-tp
+	trigger:
+		if {spawnset} is 0:
+			message "<red>Spawn has not yet been set."
+			message "<green>Please contact your <red>server administator<green> to set the spawn."
+			stop
+		teleport player to {spawn}
+		message "<green>Warped to spawn."
+		
+command /setspawn:
+	permission: default.admin
+	aliases: spawnset, spawn-set, set-spawn
+	trigger:
+		if {spawnset} is 0:
+			set {spawn} to location of player
+			message "<green>Spawn successfully set."
+			set {spawnset} to 1
+			stop
+		message "<red>Spawn has already been set."
+		
+command /deletespawn:
+	permission: default.admin
+	aliases: delspawn, del-spawn, delete-spawn
+	trigger:
+		if {spawnset} is 0:
+			message "<red>There is no spawn"
+			stop
+		set {spawnset} to 0
+		message "<green>Spawn deleted."
+		
+command /spawntpadmin:
+	permission: default.admin
+	aliases: spawnadmin, adminspawn, spawn-admin, spawna
+	trigger:
+		teleport player to {spawn}
+		message "<green>Teleported to spawn <red>(even if it has been deleted)<green>."

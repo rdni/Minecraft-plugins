@@ -1,0 +1,102 @@
+command broadcast <string>:
+	permission: default.admin
+	aliases: messageall, bo
+	trigger:
+		broadcast ""
+		broadcast argument-1
+		broadcast ""
+		
+command /clearChat:
+    trigger:
+        loop 100 times:
+            send "" to player
+		
+command /clearallchat:
+    permission: default.admin
+    trigger:
+        loop 100 times:
+            broadcast ""
+			
+command /setendlocation:
+	permission: default.admin
+	trigger:
+		set {end} to location of player
+		message "End location set"
+		
+command /death:
+	trigger:
+		make console execute command "/gamerule keepInventory true"
+		wait 1 tick
+		kill the player
+		wait 1 tick
+		make console execute command "/gamerule keepInventory false"
+		message "<red>%player%<green> did /death."
+
+command /creative:
+	permission: default.admin
+	aliases: gmc
+	trigger:
+		make console execute command "/gamemode creative %player%"
+command /survival:
+	permission: default.mod
+	aliases: gms
+	trigger:
+		make console execute command "/gamemode survival %player%"
+command /spectator:
+	permission: default.mod
+	aliases: gmsp
+	trigger:
+		make console execute command "/gamemode spectator %player%"
+command /adventure:
+	permission: default.admin
+	aliases: gma
+	trigger:
+		make console execute command "/gamemode adventure %player%"
+		
+command /heal:
+	permission: default.mod
+	aliases: feed
+	trigger:
+		make console execute command "/effect give %player% regeneration 5 255 false"
+		make console execute command "/effect give %player% saturation 5 255 false"
+		wait 20 ticks
+		make console execute command "/effect clear %player%"
+
+command /joined-game <string>:
+	permission: default.mod
+	trigger:
+		broadcast "<green>Welcome %argument-1% to the server!"
+		broadcast "<yellow>%argument-1% joined the game"
+		message "<green>Troll message complete."
+		
+command /smite <string>:
+	trigger:
+		make console execute command "/execute as %argument-1% run summon minecraft:lightning_bolt ~ ~ ~"
+		
+command /serversay <string>:
+	permission: default.mod
+	trigger:
+		broadcast "<Server> %argument-1%"
+		
+command /givet1key:
+	permission: default.admin
+	trigger:
+		give the player tripwire hook of unbreaking 1 named "&r&eTier 1 Crate Key" with lore "&r&eUse this on Tier 1 crates"
+		message "<green>Key given."
+		
+command /givet1key64:
+	permission: default.admin
+	trigger:
+		give the player 64 of tripwire hook of unbreaking 1 named "&r&eTier 1 Crate Key" with lore "&r&eUse this on Tier 1 crates"
+		message "<green>Key given."
+		
+
+command /givecartcustom:
+	permission: default.admin
+	trigger:
+		give the player minecart with chest named "&r&eOpen"
+		
+command /giverewardcustom:
+	permission: default.admin
+	trigger:
+		give the player 3 of netherite ingots of unbreaking 1 named "&r&e3 netherite ingots || 20%%"

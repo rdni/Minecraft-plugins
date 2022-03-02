@@ -1,0 +1,42 @@
+command /sethome:
+    trigger:
+        if {home::%player's uuid%} is not set:
+            set {home::%player's uuid%} to location of player
+            message "<green>Home succesfully set"
+            stop
+        message "<red>You already have a home!"
+        message "<gray>Use <orange>/delhome <gray>to delete your home."
+			
+command /home:
+    trigger:
+        if {home::%player's uuid%} is not set:
+            message "<red>You don't have a home!"
+            message "<gray>Use <orange>/sethome <gray>to set your home."
+            stop
+        teleport player to {home::%player's uuid%}
+		
+command /delhome:
+	aliases: deletehome, del-home, delete-home
+	trigger:
+		if {home::%player's uuid%} is not set:
+			message "<red>You don't have a home!"
+			message "<gray>Use <orange>/sethome <gray>to set your home."
+			stop
+		clear {home::%player's uuid%}
+		message "<green>Succefully deleted home"
+
+command /resethomes:
+    aliases: reset-homes, clearhomes, clear-homes
+    permission: default.admin
+    trigger:
+        clear {home::*}
+        send "<green>Successfully removed <red>%{_count}% homes."
+
+command /listhomes:
+    aliases: list-homes, homes
+    permission: default.admin
+    trigger:
+        loop {home::*}:
+            set {_player} to loop-index parsed as an offline player
+            send "<orange>Home of %{_player}%: <light blue>%loop-value%"
+
