@@ -1,0 +1,5 @@
+on drop:
+	if event-item is pickaxe or sword or axe:
+		if player is not sneaking:
+			message "<red>You need to be crouching to do that." to event-player
+			cancel event
