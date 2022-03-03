@@ -4,19 +4,32 @@ command /warp:
 	cooldown message: <red>You need to wait <green>%remaining time%<red>.
 	cooldown bypass: default.tester
 	trigger:
-		set {_guiadmin} to a new chest inventory with 5 row with name "Warp"
+		set {_guiwarp} to a new chest inventory with 5 row with name "Warp"
 		set {gui_number} to 0
 		loop 45 times:
-			set slot {gui_number} of {_guiadmin} to light gray glass pane named ""
+			set slot {gui_number} of {_guiwarp} to light gray glass pane named ""
 			add 1 to {gui_number}
 		wait 1 tick
-		set slot 4 of {_guiadmin} to nether star named "&r&cSpawn" with lore "&r&lTeleports you to spawn"
-		set slot 20 of {_guiadmin} to oak sapling named "&r&cSet home"
-		set slot 22 of {_guiadmin} to ender chest named "&r&cWarps you to your home"
-		set slot 24 of {_guiadmin} to barrier named "&r&cDelete Home"
-		set slot 40 of {_guiadmin} to dragon egg named "&r&cEnd" with lore "&r&lTeleports you to the end"
-		set slot 44 of {_guiadmin} to diamond sword named "&r&cKits"
+		set slot 4 of {_guiwarp} to nether star named "&r&cSpawn" with lore "&r&lTeleports you to spawn"
+		set slot 20 of {_guiwarp} to oak sapling named "&r&cSet home"
+		set slot 22 of {_guiwarp} to ender chest named "&r&cWarps you to your home"
+		set slot 24 of {_guiwarp} to barrier named "&r&cDelete Home"
+		set slot 40 of {_guiwarp} to dragon egg named "&r&cEnd" with lore "&r&lTeleports you to the end"
+		set slot 44 of {_guiwarp} to diamond sword named "&r&cKits"
 		open {_guiadmin} to player
+
+command /kit:
+	permission: default.tester
+	trigger:
+		set {_guikit} to a new chest inventory with 3 row with name "Kit"
+		set {gui_numberkit} to 0
+		loop 45 times:
+			set slot {gui_numberkit} of {_guikit} to light gray glass pane named ""
+			add 1 to {gui_numberkit}
+			set slot 13 of {_guikit} to iron pickaxe named "&r&cStarter kit" with lore "&r&eGives you full iron tools"
+			set slot 11 of {_guikit} to diamond pickaxe of efficiency 5 named "&r&cVIP kit" with lore "&r&eGives you full enchanted diamond armour"
+			set slot 15 of {_guikit} to netherite pickaxe of efficiency 5 named "&r&eOP kit" with lore "&r&eKit for people with OP"
+		open {_guikit} to player
 		
 on inventory click:
 	if name of event-inventory is "Warp":
@@ -72,8 +85,7 @@ on inventory click:
 			set slot 11 of {_guikit} to diamond pickaxe of efficiency 5 named "&r&cVIP kit" with lore "&r&eGives you full enchanted diamond armour"
 			set slot 15 of {_guikit} to netherite pickaxe of efficiency 5 named "&r&eOP kit" with lore "&r&eKit for people with OP"
 			open {_guikit} to the player
-on inventory click:
-	if name of event-inventory is "Confirmhome":
+	else if name of event-inventory is "Confirmhome":
 		if {guitake} is 0:
 			cancel event
 		if index of event-slot = 3:
@@ -87,22 +99,7 @@ on inventory click:
 		if index of event-slot = 5:
 			message "<red>Cancelled."
 			close the player's inventory
-			
-command /kit:
-	permission: default.tester
-	trigger:
-		set {_guikit} to a new chest inventory with 3 row with name "Kit"
-		set {gui_numberkit} to 0
-		loop 45 times:
-			set slot {gui_numberkit} of {_guikit} to light gray glass pane named ""
-			add 1 to {gui_numberkit}
-			set slot 13 of {_guikit} to iron pickaxe named "&r&cStarter kit" with lore "&r&eGives you full iron tools"
-			set slot 11 of {_guikit} to diamond pickaxe of efficiency 5 named "&r&cVIP kit" with lore "&r&eGives you full enchanted diamond armour"
-			set slot 15 of {_guikit} to netherite pickaxe of efficiency 5 named "&r&eOP kit" with lore "&r&eKit for people with OP"
-		open {_guikit} to player
-		
-on inventory click:
-	if name of event-inventory is "Kit":
+	else if name of event-inventory is "Kit":
 		if {guitake} is 0:
 			cancel event
 		if index of event-slot = 13:

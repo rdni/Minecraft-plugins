@@ -1,5 +1,0 @@
-command /test1:
-	permission: default.tester
-	trigger:
-		set {_loc} to player's location
-		set block at {_loc} to air

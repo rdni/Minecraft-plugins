@@ -1,4 +1,23 @@
-on inventory click:
+command /cratecreatet1: #Actually creates the crates
+	permission: default.admin
+	trigger:
+		set {_cratet1} to targeted block
+		set block above {_cratet1} to chest
+		set {_cratet1} to block above {_cratet1}
+		set name of block at {_cratet1} to "Tier 1 Crate"
+		set {gui_number} to 0
+		loop 45 times:
+			set slot {gui_number} of {_cratet1} to light gray glass pane named ""
+			add 1 to {gui_number}
+		set slot 0 of {_cratet1} to 32 of diamonds of unbreaking 1 named "&r&e32 diamonds || 80%%"
+		set slot 1 of {_cratet1} to 3 of netherite ingots of unbreaking 1 named "&r&e3 netherite ingots || 20%%"
+		set slot 17 of {_cratet1} to  tripwire hook of unbreaking 1 named "&r&eTier 1 Crate Key" with lore "&r&eUse this on Tier 1 crates"
+		set slot 18 of {_cratet1} to arrow named "&r&eBack"
+		set slot 26 of {_cratet1} to minecart with chest named "&r&eOpen"
+		message "<green>Set up complete."
+
+
+on inventory click:   #This section checks if you're in a crate, and if you are executes the correct code
 	if name of event-inventory is "Tier 1 Crate":
 		if {guitake} is 0:
 			cancel event
@@ -70,16 +89,22 @@ on right click:
 				open inventory of clicked block to player
 				
 				
-on break of diamond ore:
+on break of diamond ore: #here you can change percentages or add new things to get keys
 	chance of 5%:
 		drop tripwire hook of unbreaking 1 named "&r&eTier 1 Crate Key" with lore "&r&eUse this on Tier 1 crates"
 
 on break of deepslate diamond ore:
 	chance of 5%:
 		drop tripwire hook of unbreaking 1 named "&r&eTier 1 Crate Key" with lore "&r&eUse this on Tier 1 crates"
-	
-	
-	
+
+
+
+#||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+#administrative commands
+
+
+
 command /guitakeon:
 	permission: default.admin
 	trigger:
@@ -103,3 +128,11 @@ command /guibreakoff:
 	trigger:
 		set {guibreak::%player's uuid%} to 0
 		message "<green>You now can't break guis"
+		
+command /clearcrates:
+	permission: default.admin
+	trigger:
+		loop blocks in radius 3 around player:
+			if loop-block is a chest:
+				if loop-block's name is "Tier 1 Crate":
+					set loop-block to air

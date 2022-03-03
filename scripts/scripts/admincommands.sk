@@ -1,0 +1,33 @@
+command /setendlocation:
+	permission: default.admin
+	trigger:
+		set {end} to location of player
+		message "End location set"
+
+command /clearallchat:
+    permission: default.admin
+    trigger:
+        loop 100 times:
+            broadcast ""
+
+command /givet1key:
+	permission: default.admin
+	trigger:
+		give the player tripwire hook of unbreaking 1 named "&r&eTier 1 Crate Key" with lore "&r&eUse this on Tier 1 crates"
+		message "<green>Key given."
+
+command /givet1key64:
+	permission: default.admin
+	trigger:
+		give the player 64 of tripwire hook of unbreaking 1 named "&r&eTier 1 Crate Key" with lore "&r&eUse this on Tier 1 crates"
+		message "<green>Keys given."
+
+command /givecartcustom:
+	permission: default.admin
+	trigger:
+		give the player minecart with chest named "&r&eOpen"
+
+command /giverewardcustom:
+	permission: default.admin
+	trigger:
+		give the player 3 of netherite ingots of unbreaking 1 named "&r&e3 netherite ingots || 20%%"
