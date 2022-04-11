@@ -1,0 +1,163 @@
+command /update-scoreboard <offlineplayer=%player%>:
+	permission: default.admin
+	trigger:
+		if {deaths::%argument-1%} is not set:
+			set {deaths::%argument-1%} to 0
+			wait 1 tick
+		if {kills::%argument-1%} is not set:
+			set {kills::%argument-1%} to 0
+			wait 1 tick
+		set {_sidebarplayer} to argument-1
+		wipe {_sidebarplayer}'s sidebar
+		set name of sidebar of {_sidebarplayer} to "&6Testing server            "
+		set score "<grey>-------------------" in sidebar of {_sidebarplayer} to 4
+		set score "" in sidebar of {_sidebarplayer} to 3
+		set score "&3Deaths: %{deaths::%argument-1%}%" in sidebar of {_sidebarplayer} to 2
+		set score "" in sidebar of {_sidebarplayer} to 1
+		set score "&3Kills: %{kills::%argument-1%}%" in sidebar of {_sidebarplayer} to 0
+
+command /clear-deaths <offlineplayer=%player%>:
+	permission: default.mod
+	trigger:
+		set {deaths::%argument-1%} to 0
+
+command /clear-kills <offlineplayer=%player%>:
+	permission: default.mod
+	trigger:
+		set {kills::%argument-1%} to 0
+
+command /clearallkills:
+	permission: default.admin
+	trigger:
+		set {kills::*} to 0
+
+command /setkills <offlineplayer> <integer>:
+	permission: default.admin
+	trigger:
+		set {kills::%argument-1%} to argument-2
+
+
+on join:
+	if {deaths::%player%} is not set:
+		set {deaths::%player%} to 0
+		wait 1 tick
+	if {kills::%player%} is not set:
+		set {kills::%player%} to 0
+		wait 1 tick
+	set name of sidebar of player to "&6Testing server            "
+	set score "<grey>-------------------" in sidebar of player to 4
+	set score "" in sidebar of player to 3
+	set score "&3Deaths: %{deaths::%player%}%" in sidebar of player to 2
+	set score "" in sidebar of player to 1
+	set score "&3Kills: %{kills::%player%}%" in sidebar of player to 0
+	
+on death:
+	if {deaths::%player%} is not set:
+		set {deaths::%player%} to 0
+		wait 1 tick
+	add 1 to {deaths::%player%}
+	add 1 to {kills::%attacker%}
+	wipe player's sidebar
+	wait 5 ticks
+	set name of sidebar of player to "&6Testing server            "
+	set score "<grey>-------------------" in sidebar of player to 4
+	set score "" in sidebar of player to 3
+	set score "&3Deaths: %{deaths::%player%}%" in sidebar of player to 2
+	set score "" in sidebar of player to 1
+	set score "&3Kills: %{kills::%player%}%" in sidebar of player to 0
+	wipe attacker's sidebar
+	wait 5 ticks
+	set name of sidebar of player to "&6Testing server            "
+	set score "<grey>-------------------" in sidebar of attacker to 4
+	set score "" in sidebar of attacker to 3
+	set score "&3Deaths: %{deaths::%attacker%}%" in sidebar of attacker to 2
+	set score "" in sidebar of attacker to 1
+	set score "&3Kills: %{kills::%attacker%}%" in sidebar of attacker to 0
+	
+every 23 seconds:
+	set {_scoreboarddash} to "----------------------"
+	set {_scoreboardmessage} to " "
+	set {_scoreboardmove} to 0
+	loop 21 times:
+		if {_scoreboardmove} is 0:
+			set {_scoreboarddash} to "----------------------"
+			set {_scoreboardmessage} to ""
+		else if {_scoreboardmove} is 1:
+			set {_scoreboarddash} to "---------------------"
+			set {_scoreboardmessage} to "W"
+		else if {_scoreboardmove} is 2:
+			set {_scoreboarddash} to "--------------------"
+			set {_scoreboardmessage} to "We"
+		else if {_scoreboardmove} is 3:
+			set {_scoreboarddash} to "-------------------"
+			set {_scoreboardmessage} to "Wel"
+		else if {_scoreboardmove} is 4:
+			set {_scoreboarddash} to "------------------"
+			set {_scoreboardmessage} to "Welc"
+		else if {_scoreboardmove} is 5:
+			set {_scoreboarddash} to "-----------------"
+			set {_scoreboardmessage} to "Welco"
+		else if {_scoreboardmove} is 6:
+			set {_scoreboarddash} to "----------------"
+			set {_scoreboardmessage} to "Welcom"
+		else if {_scoreboardmove} is 7:
+			set {_scoreboarddash} to "---------------"
+			set {_scoreboardmessage} to "Welcome"
+		else if {_scoreboardmove} is 8:
+			set {_scoreboarddash} to "--------------"
+			set {_scoreboardmessage} to "Welcome "
+		else if {_scoreboardmove} is 9:
+			set {_scoreboarddash} to "-------------"
+			set {_scoreboardmessage} to "Welcome t"
+		else if {_scoreboardmove} is 10:
+			set {_scoreboarddash} to "------------"
+			set {_scoreboardmessage} to "Welcome to"
+		else if {_scoreboardmove} is 11:
+			set {_scoreboarddash} to "-----------"
+			set {_scoreboardmessage} to "Welcome to "
+		else if {_scoreboardmove} is 12:
+			set {_scoreboarddash} to "----------"
+			set {_scoreboardmessage} to "Welcome to t"
+		else if {_scoreboardmove} is 13:
+			set {_scoreboarddash} to "---------"
+			set {_scoreboardmessage} to "Welcome to th"
+		else if {_scoreboardmove} is 14:
+			set {_scoreboarddash} to "--------"
+			set {_scoreboardmessage} to "Welcome to the"
+		else if {_scoreboardmove} is 15:
+			set {_scoreboarddash} to "-------"
+			set {_scoreboardmessage} to "Welcome to the "
+		else if {_scoreboardmove} is 16:
+			set {_scoreboarddash} to "------"
+			set {_scoreboardmessage} to "Welcome to the s"
+		else if {_scoreboardmove} is 17:
+			set {_scoreboarddash} to "-----"
+			set {_scoreboardmessage} to "Welcome to the se"
+		else if {_scoreboardmove} is 18:
+			set {_scoreboarddash} to "----"
+			set {_scoreboardmessage} to "Welcome to the ser"
+		else if {_scoreboardmove} is 19:
+			set {_scoreboarddash} to "---"
+			set {_scoreboardmessage} to "Welcome to the serv"
+		else if {_scoreboardmove} is 20:
+			set {_scoreboarddash} to "--"
+			set {_scoreboardmessage} to "Welcome to the serve"
+		else if {_scoreboardmove} is 21:
+			set {_scoreboarddash} to "-"
+			set {_scoreboardmessage} to "Welcome to the server"
+		loop all players:
+			if {deaths::%loop-player%} is not set:
+				set {deaths::%loop-player%} to 0
+				wait 1 tick
+			if {kills::%loop-player%} is not set:
+				set {kills::%loop-player%} to 0
+				wait 1 tick
+			wipe loop-player's sidebar
+			set name of sidebar of loop-player to "&6Testing server            "
+			set score "<grey>%{_scoreboarddash}%<red>%{_scoreboardmessage}%" in sidebar of loop-player to 4
+			set score "" in sidebar of loop-player to 3
+			set score "&3Deaths: %{deaths::%loop-player%}%" in sidebar of loop-player to 2
+			set score "" in sidebar of loop-player to 1
+			set score "&3Kills: %{kills::%loop-player%}%" in sidebar of loop-player to 0
+			wait 1 second
+		add 1 to {_scoreboardmove}

@@ -1,8 +1,9 @@
-command /setendlocation:
+command /setminelocation:
 	permission: default.admin
 	trigger:
-		set {end} to location of player
-		message "End location set"
+		set {mine} to location of player
+		message "<green>Mine location set"
+
 
 command /clearallchat:
     permission: default.admin
@@ -21,6 +22,18 @@ command /givet1key64:
 	trigger:
 		give the player 64 of tripwire hook of unbreaking 1 named "&r&eTier 1 Crate Key" with lore "&r&eUse this on Tier 1 crates"
 		message "<green>Keys given."
+		
+command /givet2key:
+	permission: default.admin
+	trigger:
+		give the player tripwire hook of unbreaking 1 named "&r&eTier 2 Crate Key" with lore "&r&eUse this on Tier 2 crates"
+		message "<green>Key given."
+
+command /givet2key64:
+	permission: default.admin
+	trigger:
+		give the player 64 of tripwire hook of unbreaking 1 named "&r&eTier 2 Crate Key" with lore "&r&eUse this on Tier 2 crates"
+		message "<green>Keys given."
 
 command /givecartcustom:
 	permission: default.admin
@@ -31,3 +44,89 @@ command /giverewardcustom:
 	permission: default.admin
 	trigger:
 		give the player 3 of netherite ingots of unbreaking 1 named "&r&e3 netherite ingots || 20%%"
+
+
+command /nopickup:
+	permission: default.mod
+	trigger:
+		set {nopickuptest::%player's uuid%} to 1
+	
+command /pickup:
+	permission: default.mod
+	trigger:
+		set {nopickuptest::%player's uuid%} to 0
+		
+command broadcast <string>:
+	permission: default.admin
+	aliases: messageall, bo
+	trigger:
+		broadcast ""
+		broadcast argument-1
+		broadcast ""
+		
+command /tpa <offlineplayer>:
+	trigger:
+		set {tprequest::%argument-1%} to 1
+		set {requestfrom::%argument-1%} to "%player%"
+		set {teleporttype::%argument-1%} to 0
+		message "<green>Request sent."
+		send "<green>Teleport request from %player%. Do /tpaccept to accept it." to argument-1
+		
+command /tpahere <offlineplayer>:
+	trigger:
+		set {tprequest::%argument-1%} to 1
+		set {requestfrom::%argument-1%} to "%player%"
+		set {teleporttype::%argument-1%} to 1
+		message "<green>Request sent."
+		send "<green>Teleport here request from %player%. Do /tpaccept to accept it." to argument-1
+
+
+
+command /tpaccept:
+	trigger:
+		if {tprequest::%player%} is 1:
+			set {tprequest::%player%} to 0
+			message "<green>Teleported."
+			send "<green>Teleported." to {requestfrom::%player%}
+			if {teleporttype::%player%} is 0:
+				teleport {requestfrom::%player%} to player
+			else if {teleporttype::%player%} is 0:
+				teleport player to {requestfrom::%player%}
+		else:
+			message "<red>You have no teleport requests."
+			
+		
+command /lockchat:
+	permission: default.admin
+	trigger:
+		set {chatlocked} to 1
+		broadcast "<green>Chat has been locked by %player%. <red>Only server administators will be able to bypass this."
+		
+command /unlockchat:
+	permission: default.admin
+	trigger:
+		set {chatlocked} to 0
+		broadcast "<green>Chat has been unlocked by %player%. <red>Everyone can speak now."
+		
+command /givecompressed <string>:
+	permission: default.mod
+	trigger:
+		if argument-1 is "stone":
+			give the player stone of unbreaking 1 named "&r&eCompressed Stone" with lore "Use this in shops"
+		else if argument-1 is "diamond":
+			give the player diamond of unbreaking 1 named "&r&eCompressed diamond" with lore "Use this in shops"
+		else if argument-1 is "iron":
+			give the player iron ingot of unbreaking 1 named "&r&eCompressed iron" with lore "Use this in shops"
+	
+on chat:
+	if {chatlocked} is 1:
+		if player has permission "default.admin":
+			message "<green>You bypassed the chat lock."
+		else:
+			message "<red>Chat is locked."
+			cancel event
+			
+			
+on pick up:
+	if {nopickuptest::%player's uuid%} is 1:
+		cancel event

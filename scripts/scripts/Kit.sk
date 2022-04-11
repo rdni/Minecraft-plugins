@@ -1,7 +1,3 @@
-
-#Warning, this is outdated, the /kit command is in gui.sk
-
-
 command /food:
 	cooldown:  60 minutes
 	cooldown message: <red>You need to wait<green>%remaining time%<red>.

@@ -3,3 +3,12 @@ on drop:
 		if player is not sneaking:
 			message "<red>You need to be crouching to do that." to event-player
 			cancel event
+			
+on break:
+	if lore of player's tool contains "&eEnchants || Haste,Unbreakable":
+		if player doesn't have haste:
+			apply potion of haste of tier 2 to player for 10 seconds
+			
+on item damage:
+	if lore of player's tool contains "&eEnchants || Haste,Unbreakable":
+		cancel event

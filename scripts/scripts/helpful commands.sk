@@ -1,11 +1,3 @@
-command broadcast <string>:
-	permission: default.admin
-	aliases: messageall, bo
-	trigger:
-		broadcast ""
-		broadcast argument-1
-		broadcast ""
-		
 command /clearChat:
     trigger:
         loop 100 times:

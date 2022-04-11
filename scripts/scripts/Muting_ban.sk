@@ -1,0 +1,248 @@
+#
+# +------------------------------------------------------+ 
+# |                  SupremeBans 1.1                     | 
+# +------------------------------------------------------+ 
+#
+
+# SupremeBans is created by Vetexvortex(Hqnestly)
+# Contributers: brobie1kanobi
+# Since SupremeBans is free-to-use, credit would be nice
+# After the script is perfected, SupremeBans will become a plugin
+# SupremeBans is Non-Exclusive.
+
+# Change Prefixes down below
+
+options:
+  prefix: &6&lSupremeBans &8»
+  error: &6&lError &8»
+  silent: &7[Silent]
+
+#
+# +------------------------------------------------------+ 
+# |                Usage Configuration                   | 
+# +------------------------------------------------------+ 
+#
+
+  chatusage: &e /chat [Disable/Enable]
+  kickusage: &e/kick [Player] [Reason]
+  tempmuteusage: &e/tempmute [Player] [Reason] [Time]
+  muteusage: &e/mute [Player] [Reason]
+  unmuteusage: &e/unmute [Player]
+  tempbanusage: &e/tempban [Player] [Reason] [Time]
+  banusage: &e/ban [Player] [Reason]
+  unbanusage: &e/unban [Player]
+  warnusage: &e/warn [Player] [Reason]
+
+#
+# +------------------------------------------------------+ 
+# |               Message Configuration                  | 
+# +------------------------------------------------------+ 
+#
+
+# This is the message that gets sent to all your players when punishing
+
+  kickmsg: &6%arg-1% &ehas been kicked for &6%arg-2%
+  skickmsg: &6%arg-1% &ehas been kicked for &6%arg-3% # When Kicked From The Server Silently
+  tempmutemsg: &6%arg-1% &ehas been muted for &6%arg-2% &efor &6%arg-4%
+  stempmutemsg: &6%arg-1% &ehas been muted for &6%arg-3% &efor &6%arg-4% # When Temp-Muted Silently
+  mutemsg: &6%arg-1% &ehas been muted for &6%arg-2%
+  smutemsg: &6%arg-1% &ehas been muted for &6%arg-3% # When Permanently Muted Silently
+  unmutemsg: &6%arg-1% &ehas been unmuted
+  sunmutemsg: &6%arg-1% &ehas been unmuted
+  tempbanmsg: &6%arg-1% &ehas been banned for &6%arg-2% &efor &6%arg-4%
+  stempbanmsg: &6%arg-1% &ehas been banned for &6%arg-3% &efor &6%arg-4%
+  banmsg: &6%arg-1% &ehas been banned for &6%arg-2%
+  sbanmsg: &6%arg-1% &ehas been banned for &6%arg-3%
+  unbanmsg: &6%arg-1% &ehas been unbanned.
+  sunbanmsg: &6%arg-1% &ehas been unbanned.
+  warnmsg: &6%arg-1% &ehas been warned for &6%arg-2%
+  swarnmsg: &6%arg-1% &ehas been warned for &6%arg-3%
+  chatenablemsg: &6&n%player% &ehas enabled the chat.
+  chatdisablemsg: &6&n%player% &ehas disabled the chat.
+  mutedmsg: &eYou are still muted.
+  bannedmsg: &eYou are currently banned.
+  warnedmsg: &6You &ehave been warned for &6%arg-2%
+  swarnedmsg: &6You &ehave been warned for &6%arg-3%
+  frozenmsg: &6You &ehave been frozen.
+  stafffrozenmsg: &6%arg-1% &eis now frozen.
+  unfrozenmsg: &6You &ehave been unfrozen.
+  staffunfrozenmsg: &6%arg-1% &eis now unfrozen.
+
+
+command /kick [<offlineplayer>] [<text>] [<text>]:
+  permission: supremebans.kick
+  permission message: &cYou do not have permission to use this command.
+  trigger:
+    if arg-1 is not set:
+      send "{@error} {@kickusage}" to player
+    if arg-1 is set:
+      if arg-2 is "-s":
+        kick arg-1
+        loop all players:
+          if loop-player has permission "supremebans.kick.notify":
+            send "{@silent} {@skickmsg}"
+      else:
+        kick arg-1
+        send "{@prefix} {@kickmsg}" to all players
+
+on chat:
+  if now < {mute::%player%}:
+    cancel event
+    send "{@error} {@mutedmsg}" to player
+  if {mute::%player%} is "forever":
+    cancel event
+    send "{@error} {@mutedmsg}" to player
+
+command /tempmute [<offlineplayer>] [<text>] [<text>] [<timespan>]:
+  permission: supremebans.tempmute
+  permission message: &cYou do not have permission to use this command.
+  trigger:
+    if arg-1 is not set:
+      send "{@error} {@tempmuteusage}" to player
+    if arg-1 is set:
+      if arg-2 is "-s":
+        if arg-3 is set:
+          set {mute::%arg-1%} to arg-4 later
+          loop all players:
+            if loop-player has permission "supremebans.tempmute.notify":
+              send "{@silent} {@stempmutemsg}"
+        if arg-3 is not set:
+          send "{@error} {@tempmuteusage}" to player
+      else:
+        if arg-3 is set:
+          set {mute::%arg-1%} to arg-4 later
+          send "{@prefix} {@tempmutemsg}" to all players
+
+command /mute [<offlineplayer>] [<text>] [<text>]:
+  permission: supremebans.mute
+  permission message: &cYou do not have permission to use this command.
+  trigger:
+    if arg-1 is not set:
+      send "{@error} {@muteusage}" to player
+    if arg-1 is set:
+      if arg-2 is "-s":
+        set {mute::%arg-1%} to "forever"
+        loop all players:
+          if loop-player has permission "supremebans.mute.notify":
+            send "{@silent} {@smutemsg}"
+      else:
+        set {mute::%arg-1%} to "forever"
+        send "{@prefix} {@mutemsg}" to all players
+
+command /unmute [<offlineplayer>] [<text>]:
+  permission: supremebans.unmute
+  permission message: &cYou do not have permission to use this command.
+  trigger:
+    if arg-1 is not set:
+      send "{@error} {@unmuteusage}" to player
+    if arg-1 is set:
+      if arg-2 is "-s":
+        set {mute::%arg-1%} to "false"
+        send "{@prefix} &eYou have been unmuted" to arg-1
+        loop all players:
+          if loop-player has permission "supremebans.unmute.notify":
+            send "{@sunmutemsg}"
+      else:
+        set {mute::%arg-1%} to "false"
+        send "{@prefix} {@unmutemsg}" to all players
+
+
+on join:
+  if now < {ban::%player%}:
+    send "{@error} {@bannedmsg}" to player
+    kick player
+
+command /tempban [<offlineplayer>] [<text>] [<text>] [<timespan>]:
+  permission: supremebans.tempban
+  permission message: &cYou do not have permission to use this command.
+  trigger:
+    if arg-1 is not set:
+      send "{@error} {@tempbanusage}"
+    if arg-1 is set:
+      if arg-2 is "-s":
+        if arg-3 is set:
+          set {ban::%arg-1%} to arg-4 later
+          loop all players:
+            if loop-player has permission "supremebans.tempban.notify":
+              send "{@silent} {@stempbanmsg}"
+              kick arg-1 due to "@tempbanmsg"
+        if arg-3 is not set:
+          send "{@error} {@tempbanusage}" to player
+      else:
+        set {ban::%arg-1%} to arg-4 later
+        send "{@prefix} {@tempbanmsg}" to all players
+        kick arg-1 due to "@banmsg"
+
+command /ban [<offlineplayer>] [<text>] [<text>] :
+  permission: supremebans.ban
+  permission message: &cYou do not have permission to use this command.
+  trigger:
+    if arg-1 is not set:
+      send "{@error} {@banusage}"
+    if arg-1 is set:
+      if arg-2 is "-s":
+        if arg-3 is set:
+          set {ban::%arg-1%} to 999999 hours later
+          loop all players:
+            if loop-player has permission "supremebans.ban.notify":
+              send "{@silent} {@sbanmsg}"
+        if arg-3 is not set:
+          send "{@error} {@banusage}" to player
+          kick arg-1 due to "@banmsg"
+      else:
+        set {ban::%arg-1%} to 999999 hours later
+        send "{@prefix} {@banmsg}" to all players
+        kick arg-1 due to "@banmsg"
+
+command /unban [<offlineplayer>] [<text>]:
+  permission: supremebans.unban
+  permission message: &cYou do not have permission to use this command.
+  trigger:
+    if arg-1 is not set:
+      send "{@error} {@unbanusage}"
+    if arg-1 is set:
+      if arg-2 is "-s":
+        set {ban::%arg-1%} to now
+        loop all players:
+          if loop-player has permission "supremebans.unban.notify":
+            send "{@silent} {@sunbanmsg}"
+      else:
+        set {ban::%arg-1%} to now
+        send "{@prefix} {@unbanmsg}" to all players
+
+command /warn [<offlineplayer>] [<text>] [<text>]:
+  permission: supremebans.warn
+  permission message: &cYou do not have permission to use this command.
+  trigger:
+    if arg-1 is not set:
+      send "{@error} {@warnusage}" to player
+    if arg-1 is set:
+      if arg-2 is "-s":
+        if arg-3 is set:
+          send "{@prefix} {@swarnedmsg}" to arg-1
+          loop all players:
+            if loop-player has permission "supremebans.warn.notify":
+              send "{@silent} {@swarnmsg}"
+        if arg-3 is not set:
+          send "{@error} {@warnusage}" to player
+      else:
+        send "{@prefix} {@warnedmsg}" to arg-1
+        send "{@prefix} {@warnmsg}" to all players
+
+
+command /freeze <player>:
+  permission: supremebans.freeze
+  permission message: &cYou do not have permission to use this command.
+  trigger:
+    if {freeze::%uuid of arg%} is false:
+      set {freeze::%uuid of arg%} to true
+      send "{@prefix} {@frozenmsg}" to arg-1
+      send "{@prefix} {@stafffrozenmsg}" to player
+    else:
+      set {freeze::%uuid of arg%} to false
+      send "{@prefix} {@unfrozenmsg}" to arg-1
+      send "{@prefix} {@staffunfrozenmsg}" to player
+On any movement:
+  {freeze::%uuid of player%} is true
+  send "{@prefix} {@frozenmsg}" to player
+  cancel event

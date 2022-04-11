@@ -1,23 +1,4 @@
-command /cratecreatet1: #Actually creates the crates
-	permission: default.admin
-	trigger:
-		set {_cratet1} to targeted block
-		set block above {_cratet1} to chest
-		set {_cratet1} to block above {_cratet1}
-		set name of block at {_cratet1} to "Tier 1 Crate"
-		set {gui_number} to 0
-		loop 45 times:
-			set slot {gui_number} of {_cratet1} to light gray glass pane named ""
-			add 1 to {gui_number}
-		set slot 0 of {_cratet1} to 32 of diamonds of unbreaking 1 named "&r&e32 diamonds || 80%%"
-		set slot 1 of {_cratet1} to 3 of netherite ingots of unbreaking 1 named "&r&e3 netherite ingots || 20%%"
-		set slot 17 of {_cratet1} to  tripwire hook of unbreaking 1 named "&r&eTier 1 Crate Key" with lore "&r&eUse this on Tier 1 crates"
-		set slot 18 of {_cratet1} to arrow named "&r&eBack"
-		set slot 26 of {_cratet1} to minecart with chest named "&r&eOpen"
-		message "<green>Set up complete."
-
-
-on inventory click:   #This section checks if you're in a crate, and if you are executes the correct code
+on inventory click:
 	if name of event-inventory is "Tier 1 Crate":
 		if {guitake} is 0:
 			cancel event
@@ -30,11 +11,37 @@ on inventory click:   #This section checks if you're in a crate, and if you are 
 				remove tripwire hook of unbreaking 1 named "&r&eTier 1 Crate Key" with lore "&r&eUse this on Tier 1 crates" from player
 				set {_random::%player's uuid%} to a random integer between 1 and 5
 				if {_random::%player's uuid%} = 1 or 2 or 3 or 4:
-					give the player 32 of diamond
-					set {t1reward::%player's uuid%} to 32 diamonds
+					give the player 10 of diamond
+					set {t1reward::%player's uuid%} to 10 diamonds
 				else if {_random::%player's uuid%} is 5:
 					give the player 3 of netherite ingot
 					set {t1reward::%player's uuid%} to 3 netherite ingots
+			else:
+				message "<red>You don't have a key for that."
+	else if name of event-inventory is "Tier 2 Crate":
+		if {guitake} is 0:
+			cancel event
+		if event-slot is 18:
+			close the player's inventory
+			stop
+		if event-slot is 26:
+			if player has tripwire hook of unbreaking 1 named "&r&eTier 2 Crate Key" with lore "&r&eUse this on Tier 2 crates":
+				message "<green>Opening crate"
+				remove tripwire hook of unbreaking 1 named "&r&eTier 2 Crate Key" with lore "&r&eUse this on Tier 2 crates" from player
+				set {_random::%player's uuid%} to a random integer between 1 and 20
+				if {_random::%player's uuid%} = 1 or 2 or 3 or 4 or 5 or 6 or 7 or 8 or 9 or 10 or 11 or 12 or 13 or 14 or 15 or 16:
+					give the player 1 of netherite block
+					set {t2reward::%player's uuid%} to 1 netherite block
+				else if {_random::%player's uuid%} is 17:
+					give the player netherite boots of unbreaking 3 and protection 4
+				else if {_random::%player's uuid%} is 18:
+					give the player netherite leggings of unbreaking 3 and protection 4
+				else if {_random::%player's uuid%} is 19:
+					give the player netherite chestplate of unbreaking 3 and protection 4
+					set {t2reward::%player's uuid%} to 3 netherite ingots
+				else if {_random::%player's uuid%} is 20:
+					give the player netherite helmet of unbreaking 3 and protection 4
+				message "<green>You got %{t2reward::%player's uuid%}%"
 			else:
 				message "<red>You don't have a key for that."
 				
@@ -67,6 +74,36 @@ on inventory click:
 			
 on right click:
 	if clicked block is chest:
+		if name of event-block is "Tier 2 Crate":
+			if the player is sneaking:
+				cancel event
+				if player has tripwire hook of unbreaking 1 named "&r&eTier 2 Crate Key" with lore "&r&eUse this on Tier 2 crates":
+					message "<green>Opening crate"
+					wait 2 ticks
+					remove tripwire hook of unbreaking 1 named "&r&eTier 2 Crate Key" with lore "&r&eUse this on Tier 2 crates" from player
+					set {_random::%player's uuid%} to a random integer between 1 and 20
+					if {_random::%player's uuid%} = 1 or 2 or 3 or 4 or 5 or 6 or 7 or 8 or 9 or 10 or 11 or 12 or 13 or 14 or 15 or 16:
+						give the player 1 of netherite block
+						set {t2reward::%player's uuid%} to 1 netherite block
+					else if {_random::%player's uuid%} is 17:
+						give the player netherite boots of unbreaking 3 and protection 4
+					else if {_random::%player's uuid%} is 18:
+						give the player netherite leggings of unbreaking 3 and protection 4
+					else if {_random::%player's uuid%} is 19:
+						give the player netherite chestplate of unbreaking 3 and protection 4
+						set {t2reward::%player's uuid%} to 3 netherite ingots
+					else if {_random::%player's uuid%} is 20:
+						give the player netherite helmet of unbreaking 3 and protection 4
+					message "<green>You got %{t2reward::%player's uuid%}%"
+				else:
+					message "<red>You don't have a key for that."
+			else:
+				cancel event
+				open inventory of clicked block to player
+
+
+on right click:
+	if clicked block is chest:
 		if name of event-block is "Tier 1 Crate":
 			if the player is sneaking:
 				cancel event
@@ -87,9 +124,9 @@ on right click:
 			else:
 				cancel event
 				open inventory of clicked block to player
+		
 				
-				
-on break of diamond ore: #here you can change percentages or add new things to get keys
+on break of diamond ore:
 	chance of 5%:
 		drop tripwire hook of unbreaking 1 named "&r&eTier 1 Crate Key" with lore "&r&eUse this on Tier 1 crates"
 
@@ -98,11 +135,61 @@ on break of deepslate diamond ore:
 		drop tripwire hook of unbreaking 1 named "&r&eTier 1 Crate Key" with lore "&r&eUse this on Tier 1 crates"
 
 
+on death:
+	give the attacker sunflower of unbreaking 1 named "&r&eKill Token" with lore "&r<green>Obtained through killing another player"
 
-#||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+	
+command /givekilltoken:
+	permission: default.mod
+	trigger:
+		give the player sunflower of unbreaking 1 named "&r&eKill Token" with lore "&r<green>Obtained through killing another player"
+	
 
-#administrative commands
+command /cratecreatet1:
+	permission: default.admin
+	trigger:
+		set {_cratet1} to targeted block
+		set block above {_cratet1} to chest
+		set {_cratet1} to block above {_cratet1}
+		set name of block at {_cratet1} to "Tier 1 Crate"
+		set {gui_number} to 0
+		loop 45 times:
+			set slot {gui_number} of {_cratet1} to light gray glass pane named ""
+			add 1 to {gui_number}
+		set slot 0 of {_cratet1} to 10 of diamonds of unbreaking 1 named "&r&e10 diamonds || 80%%"
+		set slot 1 of {_cratet1} to 3 of netherite ingots of unbreaking 1 named "&r&e3 netherite ingots || 20%%"
+		set slot 17 of {_cratet1} to  tripwire hook of unbreaking 1 named "&r&eTier 1 Crate Key" with lore "&r&eUse this on Tier 1 crates"
+		set slot 18 of {_cratet1} to arrow named "&r&eBack"
+		set slot 26 of {_cratet1} to minecart with chest named "&r&eOpen"
+		message "<green>Set up complete."
 
+command /cratecreatet2:
+	permission: default.admin
+	trigger:
+		set {_cratet2} to targeted block
+		set block above {_cratet2} to chest
+		set {_cratet2} to block above {_cratet2}
+		set name of block at {_cratet2} to "Tier 2 Crate"
+		set {gui_number} to 0
+		loop 45 times:
+			set slot {gui_number} of {_cratet2} to light gray glass pane named ""
+			add 1 to {gui_number}
+		set slot 0 of {_cratet2} to 1 of netherite block of unbreaking 1 named "&r&eNetherite block || 80%%"
+		set slot 1 of {_cratet2} to 1 of netherite boots of unbreaking 3 and protection 4 named "&r&eOP boots || 5%%"
+		set slot 2 of {_cratet2} to 1 of netherite leggings of unbreaking 3 and protection 4 named "&r&eOP boots || 5%%"
+		set slot 3 of {_cratet2} to 1 of netherite chestplate of unbreaking 3 and protection 4 named "&r&eOP boots || 5%%"
+		set slot 4 of {_cratet2} to 1 of netherite helmet of unbreaking 3 and protection 4 named "&r&eOP boots || 5%%"
+		set slot 17 of {_cratet2} to tripwire hook of unbreaking 1 named "&r&eTier 2 Crate Key" with lore "&r&eUse this on Tier 2 crates"
+		set slot 18 of {_cratet2} to arrow named "&r&eBack"
+		set slot 26 of {_cratet2} to minecart with chest named "&r&eOpen"
+		message "<green>Set up complete."
+
+command /daily:
+	cooldown: 24 hours
+	cooldown message: <red>Its not been 24 hours. Time remaining: %remaining time%
+	cooldown storage: {daily::%player%}
+	trigger:
+		give the player tripwire hook of unbreaking 1 named "&r&eTier 2 Crate Key" with lore "&r&eUse this on Tier 2 crates"
 
 
 command /guitakeon:

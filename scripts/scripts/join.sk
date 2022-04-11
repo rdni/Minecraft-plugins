@@ -2,8 +2,9 @@ on first join:
 	message "<red>%player%<green> joined for the first time!"
 	teleport player to {spawn}
 	set {joined::%player's uuid%} to 1
+	give the player wooden pickaxe
 	stop
 	
 on join:
-	if {joined::%player's uuid%} is 1:
 		message "<green>Welcome %player% to the server!"
+		teleport player to {spawn}

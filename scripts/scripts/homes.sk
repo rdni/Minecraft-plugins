@@ -7,6 +7,14 @@ command /sethome:
         message "<red>You already have a home!"
         message "<gray>Use <orange>/delhome <gray>to delete your home."
 			
+command /home:
+    trigger:
+        if {home::%player's uuid%} is not set:
+            message "<red>You don't have a home!"
+            message "<gray>Use <orange>/sethome <gray>to set your home."
+            stop
+        teleport player to {home::%player's uuid%}
+		
 command /delhome:
 	aliases: deletehome, del-home, delete-home
 	trigger:
@@ -16,15 +24,6 @@ command /delhome:
 			stop
 		clear {home::%player's uuid%}
 		message "<green>Succefully deleted home"
-
-
-command /home:
-    trigger:
-        if {home::%player's uuid%} is not set:
-            message "<red>You don't have a home!"
-            message "<gray>Use <orange>/sethome <gray>to set your home."
-            stop
-        teleport player to {home::%player's uuid%}
 
 command /resethomes:
     aliases: reset-homes, clearhomes, clear-homes

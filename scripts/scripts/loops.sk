@@ -1,0 +1,7 @@
+on join:
+	loop all players:
+		apply night vision 1 to loop-player for 10 minutes
+		
+every 10 minutes:
+	loop all players:
+		apply night vision 1 to loop-player for 10 minutes
