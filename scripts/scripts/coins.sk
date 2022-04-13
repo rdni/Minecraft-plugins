@@ -1,0 +1,60 @@
+command /sell:
+	trigger:
+		set {_cobblestone} to number of cobblestone in player's inventory
+		set {_ironore} to number of iron ore in player's inventory
+		set {_diamond} to number of diamond ore in player's inventory
+		set {_ancientdebris} to number of ancient debris in player's inventory
+		set {_value1} to 10 * {_cobblestone}#!<---
+		set {_value2} to 100 * {_diamond}#!<---
+		set {_value3} to 50 * {_ironore}#!<---
+		set {_value4} to 1000 * {_ancientdebris}#!<---
+		set {_sellvalue} to {_value1} + {_value2} + {_value3} + {_value4}#!<---
+		set {_sellamount} to {_cobblestone} + {_ironore} + {_diamond} + {_ancientdebris}
+		remove all diamond ore, ancient debris, iron ore, cobblestone from player's inventory
+		add {_sellvalue} to {coins::%player%}
+		message "<green>Sold %{_sellamount}% items for %{_sellvalue}%."
+		message "<green>Balance is now %{coins::%player%}%"
+		
+command /shop [<text>]:
+	trigger:
+		if player has permission "default.admin":
+			if argument-1 is not set:
+				open chest with 5 rows named "Shop" to player
+				set {_guinumber} to 0
+				loop 45 times:
+					format slot {_guinumber} of player with light gray glass panes named "" to be unstealable
+					add 1 to {_guinumber}
+				wait 1 tick
+				format slot 4 of player with grass block named "&rGeneral" with lore "&rOpen the general section" to run [make player execute command "/shop general"]
+			else if argument-1 is "general":
+				open chest with 5 rows named "Shop" to player
+				set {_guinumber} to 0
+				loop 45 times:
+					format slot {_guinumber} of player with light gray glass panes named "" to be unstealable
+					add 1 to {_guinumber}
+				wait 1 tick
+				format slot 4 of player with grass block named "&rGrass block" with lore "&rPrice: 100" to run [make player execute command "/buy grass"]
+				set {_tntprice} to {coins::%player%} + 1
+				format slot 0 of player with tnt named "&rTNT"  with lore "&rPrice: %{_tntprice}%" to run [message "<red>Insufficient funds"]
+				format slot 1 of player with diamond of unbreaking 1 named "&r&eCompressed diamond" with lore "&rPrice: 500" to run [make player execute command "/buy compdia"]
+		else:
+			message "<red>This is still a work in progress."
+command /buy <text>:
+	trigger:
+		if argument-1 is "grass":
+			if {coins::%player%} is greater than 99:
+				remove 100 from {coins::%player%}
+				give the player grass block
+			else:
+				message "<red>Insufficient funds"
+		else if argument-1 is "compdia":
+			if {coins::%player%} is greater than 499:
+				remove 500 from {coins::%player%}
+				give the player diamond of unbreaking 1 named "&r&eCompressed diamond" with lore "Use this in shops"
+			else:
+				message "<red>Insufficient funds"
+
+command /setbal <text>:
+	permission: default.mod
+	trigger:
+		set {coins::%player%} to argument-1 parsed as a number
