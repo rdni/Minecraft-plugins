@@ -1,0 +1,311 @@
+#----------------------------------------------------------------------------------------------------------
+#Vanilla skript plugin
+#----------------------------------------------------------------------------------------------------------
+
+
+options:
+	logo: "<yellow><<grey>VS<yellow>>&r"
+	permissionMessage: "%{@logo}%<red>You don't have permission for that!"
+	
+
+#----------------------------------------------------------------------------------------------------------
+
+#Warning
+#Don't change code past here if you don't know what you're doing
+
+#----------------------------------------------------------------------------------------------------------
+
+command /spawn [<text>]:
+	permission: vs.default
+	trigger:
+		if argument-1 is not set:
+			teleport the player to {spawn}
+			message "%{@logo}% <green>Warped to spawn"
+		if argument-1 is set:
+			if argument-1 is "set":
+				if player has permission "vs.admin":
+					set {spawn} to player's position
+				else:
+					message {@permissionMessage}
+
+
+command /entityCount <int> [<text>]:
+	permission: vs.admin
+	trigger:
+		if argument-2 is not set:
+			set {_entityCount} to 0
+			set {_entityKind} to 0
+			loop all entities:
+				if loop-entity is not player:
+					add 1 to {_entityCount}
+					if {_entityKind} is less than argument-1:
+						add 1 to {_entityKind}
+						send "%{@logo}% <red>%loop-entity's location% is a(n) %loop-entity%."
+			message "%{@logo}% <green>There are <red>%{_entityCount}%<green> entities."
+		if argument-2 is set:
+			set {_entityCount} to 0
+			set {_entityKind} to 0
+			set {_skipEntity} to argument-2
+			loop all entities:
+				if loop-entity is not player:
+					if loop-entity is not {_skipEntity}:
+						add 1 to {_entityCount}
+						if {_entityKind} is less than argument-1:
+							add 1 to {_entityKind}
+							send "%{@logo}% <red>%loop-entity's location% is a(n) %loop-entity%."
+			message "%{@logo}% <green>There are <red>%{_entityCount}%<green> entities."
+
+
+command /killall [<text>]:
+	permission: vs.admin
+	trigger:
+		set {_killType} to argument-1
+		if argument-1 is not set:
+			loop all players:
+				kill loop-player
+			message "%{@logo}% <green>All players killed."
+		else if argument-1 is "all":
+			loop all entities:
+				kill loop-entity
+			message "%{@logo}% <green>All entites killed."
+
+
+
+command /tpall:
+	permission: vs.admin
+	permission message: {@permissionMessage}
+	trigger:
+		set {_tpAllPos} to player's position
+		loop all players:
+			teleport loop-player to {_tpAllPos}
+		broadcast "%{@logo}% <green>Everyone was teleported to &l&b%player%&r<green>."
+
+command /adminpanel [<text>] [<text>]:
+	permission: vs.admin
+	permission message: {@permissionMessage}
+	executable by: players
+	trigger:
+		if argument-1 is not set:
+			open chest with 5 rows named "&r&cAdmin Panel" to player
+			set {gui_number} to 0
+			loop 45 times:
+				format slot {gui_number} of player with light gray glass pane named "" to be unstealable
+				add 1 to {gui_number}
+			wait 1 tick
+			format slot 0 of player with nether star named "&r&cSpawn" with lore "&r&lTeleports you to spawn" to run [make player execute command "/spawn"]
+			format slot 1 of player with beacon named "&r&cPlayer Menu" to run [make player execute command "/adminpanel menu"]
+			format slot 2 of player with glass pane named "&r&cVanish" to run [make player execute command "/vanish"]
+			format slot 3 of player with iron bar named "&r&cClear Lag" to run [make player execute command "/clearlag"]
+			format slot 4 of player with redstone named "&r&cDebug Mode" to run [make player execute command "/adminpanel debugMode"]
+			if {debugMode::%player%} is true:
+				format slot 44 of player with bedrock named "&r&cAdd Staff" to run [make player execute command "/adminpanel staffMenu"]
+				format slot 43 of player with bedrock named "&r&cAdd OP" to run [make player execute command "/adminpanel OPMenu"]
+
+		else if argument-1 is "menu":
+			open chest with 5 rows named "&r&cPlayer Menu" to player
+			set {slot} to 0
+			set {_playerMenu} to player
+			loop all players:
+				set {_loopName} to loop-player
+				set {_loopHead} to loop-player's skull
+				format slot {slot} of player with {_loopHead} named {_loopPlayerName} to run [make player execute command "/adminpanel close"]
+				add 1 to {slot}
+		else if argument-1 is "staffMenu":
+			open chest with 5 rows named "&r&cStaff Menu" to player
+			set {slot} to 0
+			set {_playerMenu} to player
+			loop all players:
+				set {_loopName} to loop-player
+				set {_loopHead} to loop-player's skull
+				format slot {slot} of player with {_loopHead} named {_loopPlayerName} to run [make player execute command "/adminpanel close"]
+				add 1 to {slot}
+		else if argument-1 is "OPMenu":
+			open chest with 5 rows named "&r&cOP Menu" to player
+			set {slot} to 0
+			set {_playerMenu} to player
+			loop all players:
+				set {_loopName} to loop-player
+				set {_loopHead} to loop-player's skull
+				format slot {slot} of player with {_loopHead} named {_loopPlayerName} to run [make player execute command "/adminpanel close"]
+				add 1 to {slot}
+		else if argument-1 is "tp":
+			message argument-2
+		else if argument-1 is "debugMode":
+			if {debugMode::%player%} is not set:
+				set {debugMode::%player%} to true
+				message "%{@logo}% <green>Now in debug mode. No chat messages will be shown and more options are avaliable in the admin panel."
+			else:
+				delete {debugMode::%player%}
+				message "%{@logo}% <green>Now out of debug mode. Chat messages will be shown and extra options in the admin panel will be hidden."
+		else if argument-1 is "close":
+			close the player's inventory
+
+command /makeStaff <offlineplayer>:
+	permission: vs.owner
+	permission message: {@permissionMessage}
+	trigger:
+		set {staff::%argument-1%} to true
+		message "%{@logo}% <green>Player <red>%{argument-1}% <green> is now staff."
+
+command /staff [<text>]:
+	cooldown: 10 seconds
+	trigger:
+		if argument-1 is not set:
+			set {_staffLoop} to 0
+			loop all players:
+				if {staff::%loop-player%} is true:
+					if {vanish::%loop-player%} is not set:
+						add 1 to {_staffLoop}
+			message "%{@logo}% <green>There are <red>%{_staffLoop}% <green>staff online"
+
+
+command /vanish:
+	permission: vs.admin
+	permission message: {@permissionMessage}
+	trigger:
+		if {vanish::%player%} is not set:
+			hide the player from all players
+			send "%{@logo}% <green>You are hidden."
+			set {vanish::%player%} to true
+		else:
+			reveal the player from all players
+			send "%{@logo}% <green>You are no longer hidden."
+			delete {vanish::%player%}
+
+command /mute <offlineplayer> [<int>] [<text>]:
+	permission: vs.admin
+	permission message: {@permissionMessage}
+	trigger:
+		if argument-2 is set:
+			if argument-3 is set:
+				set {_mutedTime} to argument-2
+				set {muted::%player%} to 1
+				if argument-3 is "m":
+					set {_mutedLength} to "minutes"
+					message "%{@logo}% Player: %argument-1% muted for %argument-2% %{_mutedLength}%"
+					set {muted::%player%} to 1
+					wait "%{_mutedTime}% minutes" parsed as a timespan
+					set {muted::%player%} to 0
+				else if argument-3 is "s":
+					set {_mutedLength} to "seconds"
+					message "%{@logo}% Player: %argument-1% muted for %argument-2% %{_mutedLength}%"
+					set {muted::%player%} to 1
+					wait "%{_mutedTime}% seconds"  parsed as a timespan
+					set {muted::%player%} to 0
+
+				else if argument-3 is "d":
+					set {_mutedLength} to "days"
+					message "%{@logo}% Player: %argument-1% muted for %argument-2% %{_mutedLength}%"
+					set {muted::%player%} to 1
+					wait "%{_mutedTime}% days" parsed as a timespan
+					set {muted::%player%} to 0
+				else if argument-3 is "y":
+					set {_mutedLength} to "years"
+					message "%{@logo}% Player: %argument-1% muted for %argument-2% %{_mutedLength}%"
+					set {muted::%player%} to 1
+					wait "%{_mutedTime}% years" parsed as a timespan
+					set {muted::%player%} to 0
+				else if argument-3 is "h":
+					set {_mutedLength} to "hours"
+					message "%{@logo}% Player: %argument-1% muted for %argument-2% %{_mutedLength}%"
+					set {muted::%player%} to 1
+					wait "%{_mutedTime}% hours" parsed as a timespan
+					set {muted::%player%} to 0
+			else:
+				message "%{@logo}% Please enter a valid length"
+				
+command /clearlag:
+	permission: vs.admin
+	permission message: {@permissionMessage}
+	trigger:
+		set {_clearItems} to 0
+		loop all entities:
+			if loop-entity is a dropped item:
+				kill loop-entity
+				add 1 to {_clearItems}
+		broadcast "%{@logo}%<red> Cleared <blue>%{_clearItems}%<red> items."
+
+command /freeze:
+	permission: vs.admin
+	permission message: {@permissionMessage}
+	trigger:
+		set {freezeChat::%player%} to 1
+		close the player's inventory
+		message "%{@logo}% <green> Please type in chat the player you want frozen."
+
+command /unfreeze <offlineplayer>:
+	permission: vs.admin
+	permission message: {@permissionMessage}
+	trigger:
+		set {frozen::%argument-1%} to 0
+
+command /readvariable:
+	trigger:
+		message "%{frozen::%player%}%."
+
+
+
+on inventory click:
+	if name of event-inventory is "&r&cPlayer Menu":
+		if event-item is player skull:
+			message "yes"
+			message the name of event-item
+		set {_adminTp::%player%} to name of event-item
+		message "%{_adminTp::%player%}%"
+		teleport event-player to {_adminTp::%player%}
+		close the player's inventory
+		message "%{@logo}% <green>Teleported to <red>%{_adminTp::%player%}%"
+	else if name of event-inventory is "&r&cStaff Menu":
+		set {_makestaff} to name of event-item
+		make player execute command "/makeStaff %{_makestaff}%"
+		close the player's inventory
+	else if name of event-inventory is "&r&cOP Menu":
+		set {_makeOP} to name of event-item
+		make player execute command "/op %{_makeOP}%"
+		close the player's inventory
+		
+
+on chat:
+	if {muted::%player%} is "1":
+		cancel event
+		message "%{@logo}% You're muted"
+	else if {freezeChat::%player%} is 1:
+		cancel event
+		set {_freezePlayer} to message
+		set {frozen::%{_freezePlayer}%} to 1
+		set {freezeChat::%player%} to 0
+		set {frozenPosition::%{_freezePlayer}%} to {_freezePlayer}'s position
+	else:
+		cancel event
+		loop all players:
+			if {debugMode::%player%} is not set:
+				send the chat message to loop-player
+
+
+on first join:
+	teleport the player to spawn
+
+every 5 seconds:
+	loop all players:
+		set {_frozenCheck} to loop-player
+		if {frozen::%{_frozenCheck}%} is 1:
+			apply potion of slowness of tier 255 to loop-player for 5 seconds
+			teleport loop-player to {frozenPosition::%{_frozenCheck}%}
+			send "%{@logo}% <red>Frozen." to loop-player
+
+on any movement:
+	if {frozen::%player%} is 1:
+		cancel event
+
+
+every 5 minutes:
+	broadcast "%{@logo}%<red> Items will be cleared in 30 seconds"
+	wait 15 seconds
+	broadcast "%{@logo}%<red> Items will be cleared in 15 seconds"
+	wait 15 seconds
+	set {_clearItems} to 0
+	loop all entities:
+		if loop-entity is a dropped item:
+			kill loop-entity
+			add 1 to {_clearItems}
+	broadcast "%{@logo}%<red> Cleared <blue>%{_clearItems}%<red> items."
