@@ -106,7 +106,7 @@ command /adminpanel [<text>] [<text>]:
 			set {slot} to 0
 			set {_playerMenu} to player
 			loop all players:
-				set {_loopName} to loop-player
+				set {_loopName} to "%loop-player%"
 				set {_loopHead} to loop-player's skull
 				format slot {slot} of player with {_loopHead} named {_loopPlayerName} to run [make player execute command "/adminpanel close"]
 				add 1 to {slot}
@@ -115,7 +115,7 @@ command /adminpanel [<text>] [<text>]:
 			set {slot} to 0
 			set {_playerMenu} to player
 			loop all players:
-				set {_loopName} to loop-player
+				set {_loopName} to "%loop-player%"
 				set {_loopHead} to loop-player's skull
 				format slot {slot} of player with {_loopHead} named {_loopPlayerName} to run [make player execute command "/adminpanel close"]
 				add 1 to {slot}
@@ -124,7 +124,7 @@ command /adminpanel [<text>] [<text>]:
 			set {slot} to 0
 			set {_playerMenu} to player
 			loop all players:
-				set {_loopName} to loop-player
+				set {_loopName} to "%loop-player%"
 				set {_loopHead} to loop-player's skull
 				format slot {slot} of player with {_loopHead} named {_loopPlayerName} to run [make player execute command "/adminpanel close"]
 				add 1 to {slot}
