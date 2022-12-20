@@ -4,8 +4,10 @@
 
 
 options:
-	logo: "<yellow><<grey>VS<yellow>>&r"
-	permissionMessage: "%{@logo}%<red>You don't have permission for that!"
+	logo: <yellow><<grey>VS<yellow>>&r
+	permissionMessage: <yellow><<grey>VS<yellow>><red>You don't have permission for that!
+	error: <yellow><<grey>VS<yellow>><red>Sorry there was an error on our part. Please contact your server administrator/redninja9854 to fix this.
+	verifyNeeded: false
 	
 
 #----------------------------------------------------------------------------------------------------------
@@ -15,18 +17,19 @@ options:
 
 #----------------------------------------------------------------------------------------------------------
 
-command /spawn [<text>]:
+command /spawn <text="warp">:
 	permission: vs.default
 	trigger:
-		if argument-1 is not set:
+		if argument-1 is "warp":
 			teleport the player to {spawn}
 			message "%{@logo}% <green>Warped to spawn"
-		if argument-1 is set:
-			if argument-1 is "set":
-				if player has permission "vs.admin":
-					set {spawn} to player's position
-				else:
-					message {@permissionMessage}
+		else if argument-1 is "set":
+			if player has permission "vs.admin":
+				set {spawn} to player's position
+			else:
+				message {@permissionMessage}
+		else:
+			message "%{@logo}% Invalid command (/spawn)"
 
 
 command /entityCount <int> [<text>]:
@@ -42,7 +45,7 @@ command /entityCount <int> [<text>]:
 						add 1 to {_entityKind}
 						send "%{@logo}% <red>%loop-entity's location% is a(n) %loop-entity%."
 			message "%{@logo}% <green>There are <red>%{_entityCount}%<green> entities."
-		if argument-2 is set:
+		else if argument-2 is set:
 			set {_entityCount} to 0
 			set {_entityKind} to 0
 			set {_skipEntity} to argument-2
@@ -129,7 +132,7 @@ command /adminpanel [<text>] [<text>]:
 				format slot {slot} of player with {_loopHead} named {_loopPlayerName} to run [make player execute command "/adminpanel close"]
 				add 1 to {slot}
 		else if argument-1 is "tp":
-			message argument-2
+			make console execute command "/tp %player% %argument-2%"
 		else if argument-1 is "debugMode":
 			if {debugMode::%player%} is not set:
 				set {debugMode::%player%} to true
@@ -139,6 +142,12 @@ command /adminpanel [<text>] [<text>]:
 				message "%{@logo}% <green>Now out of debug mode. Chat messages will be shown and extra options in the admin panel will be hidden."
 		else if argument-1 is "close":
 			close the player's inventory
+
+command /broadcast <text>:
+	permission: vs.admin
+	permission message: {@permissionMessage}
+	trigger:
+		broadcast "%{@logo}% <red> | %argument-1%"
 
 command /makeStaff <offlineplayer>:
 	permission: vs.owner
@@ -180,39 +189,43 @@ command /mute <offlineplayer> [<int>] [<text>]:
 			if argument-3 is set:
 				set {_mutedTime} to argument-2
 				set {muted::%player%} to 1
-				if argument-3 is "m":
+				if argument-3 is "m" or "minutes":
 					set {_mutedLength} to "minutes"
 					message "%{@logo}% Player: %argument-1% muted for %argument-2% %{_mutedLength}%"
 					set {muted::%player%} to 1
 					wait "%{_mutedTime}% minutes" parsed as a timespan
 					set {muted::%player%} to 0
-				else if argument-3 is "s":
+				else if argument-3 is "s" or "seconds":
 					set {_mutedLength} to "seconds"
 					message "%{@logo}% Player: %argument-1% muted for %argument-2% %{_mutedLength}%"
 					set {muted::%player%} to 1
 					wait "%{_mutedTime}% seconds"  parsed as a timespan
 					set {muted::%player%} to 0
 
-				else if argument-3 is "d":
+				else if argument-3 is "d" or "days":
 					set {_mutedLength} to "days"
 					message "%{@logo}% Player: %argument-1% muted for %argument-2% %{_mutedLength}%"
 					set {muted::%player%} to 1
 					wait "%{_mutedTime}% days" parsed as a timespan
 					set {muted::%player%} to 0
-				else if argument-3 is "y":
+				else if argument-3 is "y" or "years":
 					set {_mutedLength} to "years"
 					message "%{@logo}% Player: %argument-1% muted for %argument-2% %{_mutedLength}%"
 					set {muted::%player%} to 1
 					wait "%{_mutedTime}% years" parsed as a timespan
 					set {muted::%player%} to 0
-				else if argument-3 is "h":
+				else if argument-3 is "h" or "hours":
 					set {_mutedLength} to "hours"
 					message "%{@logo}% Player: %argument-1% muted for %argument-2% %{_mutedLength}%"
 					set {muted::%player%} to 1
 					wait "%{_mutedTime}% hours" parsed as a timespan
 					set {muted::%player%} to 0
+				else:
+					message "%{@logo}% Please enter a valid time frame (s/m/h/d/y)"
 			else:
 				message "%{@logo}% Please enter a valid length"
+		else:
+			message "%{@logo}% Please enter a valid time frame"
 				
 command /clearlag:
 	permission: vs.admin
@@ -239,22 +252,45 @@ command /unfreeze <offlineplayer>:
 	trigger:
 		set {frozen::%argument-1%} to 0
 
-command /readvariable:
+command /register <text> <text>:
 	trigger:
-		message "%{frozen::%player%}%."
+		if {@verifyNeeded} is false:
+			message "%{@logo}% This server doesn't have that feature enabled."
+		else:
+			if {password::%player%} is not set:
+				if argument-1 is argument-2:
+					set {password::%player%} to argument-1
+					message "%{@logo}% Password set. Use this when you log in."
+					make console execute command "/unfreeze %player%"
+				else:
+					message "%{@logo}% Your passwords don't match"
+			else:
+				message "%{@logo}% Sorry your password has already been set. Please contact your server administrator to change this."
 
-
+command /login <text>:
+	cooldown: 5 seconds
+	trigger:
+		if {@verifyNeeded} is false:
+			message "%{@logo}% This server doesn't have that feature enabled."
+		else:
+			if {password::%player%} is set:
+				if argument-1 is {password::%player%}:
+					message "%{@logo}% Successfully logged in."
+					make console execute command "/unfreeze %player%"
+				else:
+					message "%{@logo}% Incorrect password"
+			else:
+				message "%{@logo}% No password set. Please set one with /register."
 
 on inventory click:
 	if name of event-inventory is "&r&cPlayer Menu":
 		if event-item is player skull:
-			message "yes"
-			message the name of event-item
-		set {_adminTp::%player%} to name of event-item
-		message "%{_adminTp::%player%}%"
-		teleport event-player to {_adminTp::%player%}
-		close the player's inventory
-		message "%{@logo}% <green>Teleported to <red>%{_adminTp::%player%}%"
+			set {_adminTp::%player%} to name of event-item
+			make player execute command "adminpanel tp %event-item%"
+			close the player's inventory
+			message "%{@logo}% <green>Teleported to <red>%{_adminTp::%player%}%"
+		else:
+			message {@error}
 	else if name of event-inventory is "&r&cStaff Menu":
 		set {_makestaff} to name of event-item
 		make player execute command "/makeStaff %{_makestaff}%"
@@ -263,7 +299,6 @@ on inventory click:
 		set {_makeOP} to name of event-item
 		make player execute command "/op %{_makeOP}%"
 		close the player's inventory
-		
 
 on chat:
 	if {muted::%player%} is "1":
@@ -279,11 +314,20 @@ on chat:
 		cancel event
 		loop all players:
 			if {debugMode::%player%} is not set:
-				send the chat message to loop-player
+				send "%message%" to loop-player
+			else if {debugMode::%player%}:
+
 
 
 on first join:
 	teleport the player to spawn
+
+on join:
+	if {@verifyNeeded} is true:
+		message "%{@logo}% This server has a login system in place. Please login or register to play."
+		set {attemps::%player%} to 0
+		make console execute command "/freeze %player%"
+		set {verified::%player%} to false
 
 every 5 seconds:
 	loop all players:
