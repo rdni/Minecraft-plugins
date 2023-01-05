@@ -1,0 +1,23 @@
+command /prestige:
+    trigger:
+        set {_increase} to (floor({prestiges::%player's uuid%}/20)/10)
+        set {_cost} to (({prestiges::%player's uuid%} * 2500000) + (({prestiges::%player's uuid%} * {_increase}) * 2500000) + 2500000)
+        if {money::%player's uuid%} is greater than {_cost}:
+            add 1 to {prestiges::%player's uuid%}
+            add 0.2 to {pmulti::%player's uuid%}
+            set {money::%player's uuid%} to 0
+            message "<white>You just prestiged (%{prestiges::%player's uuid%}%)."
+        else:
+            message "<red>&lOof you're too poor to prestige."
+
+on first join:
+    set {pmulti::%player's uuid%} to 1
+    set {money::%player's uuid%} to 0
+    set {prestiges::%player's uuid%} to 0
+on right click:
+    set {_gearbonuses} to 0
+    set {_mpc} to 1
+    set {_rg} to "%regions at player%"
+    if {_rg} contains "woods":
+        set {_mpc} to 2
+    add ({_mpc} * {pmulti::%player's uuid%} * ({_gearbonuses}/100 + 1))
