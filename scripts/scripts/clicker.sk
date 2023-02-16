@@ -1,14 +1,58 @@
-command /prestige:
+#This is an open source version of the NC plugin, made with small amounts of the original code
+#Credit to Akenolein for making NC and credit to didont for making LC
+#LatestClicker version 0.1
+
+
+
+options:
+    logo: "&r<green><<yellow>&lLatestClicker&r<green>> "
+    version: "0.1"
+
+
+command /prestige [string] [int] [offlineplayer]:
     trigger:
-        set {_increase} to (floor({prestiges::%player's uuid%}/20)/10)
-        set {_cost} to (({prestiges::%player's uuid%} * 2500000) + (({prestiges::%player's uuid%} * {_increase}) * 2500000) + 2500000)
-        if {money::%player's uuid%} is greater than {_cost}:
-            add 1 to {prestiges::%player's uuid%}
-            add 0.2 to {pmulti::%player's uuid%}
-            set {money::%player's uuid%} to 0
-            message "<white>You just prestiged (%{prestiges::%player's uuid%}%)."
+        if arg-1 is not set:
+            set {_increase} to (floor({prestiges::%player's uuid%}/20)/10)
+            if {prestiges::%player's uuid%} is between 100 and 150:
+                add 0.1 to {_increase}
+            else if {prestiges::%player's uuid%} is between 150 and 200:
+                add 0.3 to {_increase}
+            else if {prestiges::%player's uuid%} is between 200 and 300:
+                add 0.5 to {_increase}
+            else if {prestiges::%player's uuid%} is between 300 and 400:
+                add 0.7 to {_increase}
+            else if {prestiges::%player's uuid%} is between 400 and 500:
+                add 1 to {_increase}
+            else if {prestiges::%player's uuid%} is greater than 500:
+                add (2 + (floor({prestiges::%player's uuid%}/20)/10)) to {_increase}
+            set {_cost} to (({prestiges::%player's uuid%} * 2500000) + (({prestiges::%player's uuid%} * {_increase}) * 2500000) + 2500000)
+            if {money::%player's uuid%} is greater than {_cost}:
+                add 1 to {prestiges::%player's uuid%}
+                add 0.2 to {pmulti::%player's uuid%}
+                set {money::%player's uuid%} to 0
+                message "<white>You just prestiged (%{prestiges::%player's uuid%}%)."
+            else:
+                message "<red>&lOof you're too poor to prestige."
+        else if arg-1 is "set":
+            if player has permission "clicks.admin":
+                if arg-2 is set:
+                    if arg-3 is set:
+                        set {prestiges::%arg-3's uuid%} to arg-2
+                    else:
+                        set {prestiges::%player's uuid%} to arg-2
+                else:
+                    message "%@logo% <red>The command should be used as /prestige set number [player]."
+            else:
+                message "%@logo% <red>The command should be used as /prestige."
         else:
-            message "<red>&lOof you're too poor to prestige."
+            if player has permission "clicks.admin":
+                message "%@logo% <red>The command should be used as /prestige, or /prestige set number [player]."
+            else:
+                message "%@logo% <red>The command should be used as /prestige."
+            
+command /credits:
+    trigger:
+        message "%@logo%Credit to Akenolein for making NC and credit to didont for making LC. This adaption was made by redninja9854. This is version %{@version}% of the preject. You can contribute by messaging redninja9854#2889, or by making a pull request on the github page at <grey>https://github.com/redninja9854/Minecraft-plugins/tree/main/scripts/scripts<green>."
 
 on first join:
     set {pmulti::%player's uuid%} to 1
@@ -20,4 +64,20 @@ on right click:
     set {_rg} to "%regions at player%"
     if {_rg} contains "woods":
         set {_mpc} to 2
+    if lore of helmet contains "+100%%":
+        if lore of chestplate contains "+100%%":
+            if lore of leggings contains "+100%%":
+                if lore of boots contains "+100%%":
+                    add 100 to {_gearbonuses}
+    else if lore of helmet contains "+50%%":
+        if lore of chestplate contains "+50%%":
+            if lore of leggings contains "+50%%":
+                if lore of boots contains "+50%%":
+                    add 50 to {_gearbonuses}
+    else if lore of helmet contains "+20%%":
+        if lore of chestplate contains "+20%%":
+            if lore of leggings contains "+20%%":
+                if lore of boots contains "+20%%":
+                    add 20 to {_gearbonuses}
+
     add ({_mpc} * {pmulti::%player's uuid%} * ({_gearbonuses}/100 + 1))
