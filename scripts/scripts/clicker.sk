@@ -9,7 +9,7 @@ options:
     version: "0.1"
 
 
-command /prestige [string] [int] [offlineplayer]:
+command /prestige [<string>] [<int>] [<offlineplayer>]:
     trigger:
         if arg-1 is not set:
             set {_increase} to (floor({prestiges::%player's uuid%}/20)/10)
@@ -41,43 +41,43 @@ command /prestige [string] [int] [offlineplayer]:
                     else:
                         set {prestiges::%player's uuid%} to arg-2
                 else:
-                    message "%@logo% <red>The command should be used as /prestige set number [player]."
+                    message "%{@logo}% <red>The command should be used as /prestige set number [player]."
             else:
-                message "%@logo% <red>The command should be used as /prestige."
+                message "%{@logo}% <red>The command should be used as /prestige."
         else:
             if player has permission "clicks.admin":
-                message "%@logo% <red>The command should be used as /prestige, or /prestige set number [player]."
+                message "%{@logo}% <red>The command should be used as /prestige, or /prestige set number [player]."
             else:
-                message "%@logo% <red>The command should be used as /prestige."
+                message "%{@logo}% <red>The command should be used as /prestige."
+
+command /bal:
+	trigger:
+		message "%{@logo}% Your balance is %{money::%player's uuid%}%"
             
 command /credits:
     trigger:
-        message "%@logo%Credit to Akenolein for making NC and credit to didont for making LC. This adaption was made by redninja9854. This is version %{@version}% of the preject. You can contribute by messaging redninja9854#2889, or by making a pull request on the github page at <grey>https://github.com/redninja9854/Minecraft-plugins/tree/main/scripts/scripts<green>."
+        message "&r<green><<yellow>&lLatestClicker&r<green>> &lCredit to Akenolein for making NC and credit to didont for making"
+        message "LC. This adaption was made by redninja9854. This is version %{@version}% of the project. You can contribute by making a pull request on the github page."
 
-on first join:
-    set {pmulti::%player's uuid%} to 1
-    set {money::%player's uuid%} to 0
-    set {prestiges::%player's uuid%} to 0
+on join:
+    if {pmulti::%event-player's uuid%} is not set:
+        set {pmulti::%event-player's uuid%} to 1
+        set {money::%event-player's uuid%} to 0
+        set {prestiges::%event-player's uuid%} to 0
+    loop all players:
+        wipe loop-player's sidebar
+        set name of sidebar of loop-player to "&6Latest Clicker            "
+        set score "<green>&lBalance: %{money::%loop-player's uuid%}%" in sidebar of loop-player to 0
+
 on right click:
-    set {_gearbonuses} to 0
+    set {_gearbonuses} to 1
     set {_mpc} to 1
-    set {_rg} to "%regions at player%"
-    if {_rg} contains "woods":
-        set {_mpc} to 2
-    if lore of helmet contains "+100%%":
-        if lore of chestplate contains "+100%%":
-            if lore of leggings contains "+100%%":
-                if lore of boots contains "+100%%":
-                    add 100 to {_gearbonuses}
-    else if lore of helmet contains "+50%%":
-        if lore of chestplate contains "+50%%":
-            if lore of leggings contains "+50%%":
-                if lore of boots contains "+50%%":
-                    add 50 to {_gearbonuses}
-    else if lore of helmet contains "+20%%":
-        if lore of chestplate contains "+20%%":
-            if lore of leggings contains "+20%%":
-                if lore of boots contains "+20%%":
-                    add 20 to {_gearbonuses}
+    set {_rg} to "%regions at event-player%"
+    set {_balToAdd} to (ceil({_mpc}) * ceil(({pmulti::%event-player's uuid%} + 1)) * ceil(({_gearbonuses}/100 + 1)))
+    add ({_mpc} * {pmulti::%event-player's uuid%} * ({_gearbonuses}/100 + 1)) to {money::%event-player's uuid%}
 
-    add ({_mpc} * {pmulti::%player's uuid%} * ({_gearbonuses}/100 + 1))
+every 5 seconds:
+    loop all players:
+        wipe loop-player's sidebar
+        set name of sidebar of loop-player to "&6Latest Clicker            "
+        set score "<green>&lBalance: %{money::%loop-player's uuid%}%" in sidebar of loop-player to 0
