@@ -8,6 +8,13 @@ options:
     logo: "&r<green><<yellow>&lLatestClicker&r<green>> "
     version: "0.1"
 
+command /spawn <string="warp">:
+    trigger:
+        if arg-1 is "warp":
+            teleport player to {spawn}
+        else if arg-1 is "set":
+            if player has permission "clicker.admin":
+                set {spawn} to player's position
 
 command /prestige [<string>] [<int>] [<offlineplayer>]:
     trigger:
@@ -64,10 +71,14 @@ on join:
         set {pmulti::%event-player's uuid%} to 1
         set {money::%event-player's uuid%} to 0
         set {prestiges::%event-player's uuid%} to 0
+        set {clicks::%event-player's uuid%} to 0
     loop all players:
         wipe loop-player's sidebar
-        set name of sidebar of loop-player to "&6Latest Clicker            "
-        set score "<green>&lBalance: %{money::%loop-player's uuid%}%" in sidebar of loop-player to 0
+        set name of sidebar of loop-player to "&6&lLatest Clicker            "
+        set score "<green>&lBalance: &r<green>%{money::%loop-player's uuid%}%" in sidebar of loop-player to 2
+        set score "<green>&lPmulti: &r<green>%{pmulti::%loop-player's uuid%}%" in sidebar of loop-player to 1
+        set score "<red>&lPrestiges: &r<red>%{prestiges::%loop-player's uuid%}%" in sidebar of loop-player to 0
+    teleport player to {spawn}
 
 on right click:
     set {_gearbonuses} to 1
@@ -75,9 +86,16 @@ on right click:
     set {_rg} to "%regions at event-player%"
     set {_balToAdd} to (ceil({_mpc}) * ceil(({pmulti::%event-player's uuid%} + 1)) * ceil(({_gearbonuses}/100 + 1)))
     add ({_mpc} * {pmulti::%event-player's uuid%} * ({_gearbonuses}/100 + 1)) to {money::%event-player's uuid%}
+    add 1 to {clicks::%player's uuid%}
+
+on respawn:
+    teleport player to {spawn}
 
 every 5 seconds:
     loop all players:
         wipe loop-player's sidebar
-        set name of sidebar of loop-player to "&6Latest Clicker            "
-        set score "<green>&lBalance: %{money::%loop-player's uuid%}%" in sidebar of loop-player to 0
+        set name of sidebar of loop-player to "&6&lLatest Clicker            "
+        set score "Balance: &a%{money::%loop-player's uuid%}%" in sidebar of loop-player to 14
+        set score "Clicks: &6%{clicks::%player's uuid%}%" in sidebar of loop-player to 13
+        set score "Perm. multi: &c%{pmulti::%loop-player's uuid%}%" in sidebar of loop-player to 12
+        set score "Prestiges: <red>%{prestiges::%loop-player's uuid%}%" in sidebar of loop-player to 0
